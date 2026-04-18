@@ -1,23 +1,10 @@
-# ============================================
-# R Shiny: Headphone Comments Discussion Volume
-# 耳机评论讨论量饼图
-# ============================================
-
 library(shiny)
 library(ggplot2)
 library(dplyr)
 
-# ============================================
-# 读取数据（使用你提供的路径）
-# ============================================
-
 df <- read.csv("D:/headphone_comments_800_cleaned.csv")
 
 df$text <- ifelse(is.na(df$comment_clean), df$comment, df$comment_clean)
-
-# ============================================
-# 分类函数：无线 vs 有线
-# ============================================
 
 classify_wireless_vs_wired <- function(text) {
   text_lower <- tolower(text)
@@ -38,18 +25,12 @@ classify_wireless_vs_wired <- function(text) {
 
 df$type <- sapply(df$text, classify_wireless_vs_wired)
 
-# ============================================
-# 讨论量统计
-# ============================================
 
 discussion_data <- df %>%
   filter(type != 'Other') %>%
   group_by(type) %>%
   summarise(count = n())
 
-# ============================================
-# UI
-# ============================================
 
 ui <- fluidPage(
   titlePanel("Headphone Comments: Wireless vs Wired Discussion Volume"),
@@ -65,9 +46,6 @@ ui <- fluidPage(
   )
 )
 
-# ============================================
-# Server
-# ============================================
 
 server <- function(input, output) {
   
@@ -92,9 +70,5 @@ server <- function(input, output) {
       theme(plot.title = element_text(size = 16, face = "bold", hjust = 0.5))
   })
 }
-
-# ============================================
-# 运行
-# ============================================
 
 shinyApp(ui = ui, server = server)
