@@ -2,28 +2,23 @@ library(shiny)
 library(ggplot2)
 library(dplyr)
 
-# 读取数据
 lr_coef <- read.csv("D:/Users/常芮宁/Downloads/lr_coefficients.csv")
 
-# 过滤掉无意义的词（不过滤 5mm 和 mm），并把 5mm 改成 3.5mm
 lr_coef <- lr_coef %>%
   filter(!word %in% c("ve", "just", "example", "like", "would", "get")) %>%
   mutate(word = ifelse(word == "5mm", "3.5mm", word))
 
-# Wireless top 10
 wireless_keywords <- lr_coef %>%
   filter(coefficient > 0) %>%
   arrange(desc(coefficient)) %>%
   head(10)
 
-# Wired top 10
 wired_keywords <- lr_coef %>%
   filter(coefficient < 0) %>%
   mutate(coefficient = abs(coefficient)) %>%
   arrange(desc(coefficient)) %>%
   head(10)
 
-# UI
 ui <- fluidPage(
   titlePanel("Logistic Regression: Wireless vs Wired Headphones"),
   sidebarLayout(
@@ -44,7 +39,6 @@ ui <- fluidPage(
   )
 )
 
-# Server
 server <- function(input, output) {
   output$wireless_plot <- renderPlot({
     wireless_keywords %>%
