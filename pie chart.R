@@ -1,18 +1,14 @@
-# Load packages
 library(shiny)
 library(ggplot2)
 library(dplyr)
 
-# Read data
 brand_stats <- read.csv("D:/brand_stats.csv")
 
-# Calculate total count by brand for pie chart
 brand_total <- brand_stats %>%
   group_by(brand) %>%
   summarise(total_count = sum(count)) %>%
   arrange(desc(total_count))
 
-# UI
 ui <- fluidPage(
   titlePanel("Best Buy Over-Ear Headphone Brand Distribution"),
   
@@ -34,7 +30,6 @@ ui <- fluidPage(
   )
 )
 
-# Server
 server <- function(input, output) {
   
   output$pie_chart <- renderPlot({
@@ -60,7 +55,6 @@ server <- function(input, output) {
                   position = position_stack(vjust = 0.5), size = 3)
       
     } else {
-      # Bar chart for selected brand (showing wireless/wired/unknown)
       plot_data <- brand_stats[brand_stats$brand == input$brand_select, ]
       plot_title <- paste(input$brand_select, "- Connection Type Distribution")
       
@@ -93,5 +87,4 @@ server <- function(input, output) {
   })
 }
 
-# Run
 shinyApp(ui = ui, server = server)
